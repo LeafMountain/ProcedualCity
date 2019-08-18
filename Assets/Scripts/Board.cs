@@ -5,6 +5,7 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     public Vector2Int size = Vector2Int.one;
+    public PatternTemplate[] patterns = null;
 
     private Tile[,] tiles = null;
 
@@ -18,6 +19,7 @@ public class Board : MonoBehaviour
             {
                 tiles[x, y] = new Tile();
                 tiles[x, y].position = new Vector2Int(x, y);
+                tiles[x, y].AddPatternTemplates(patterns);
             }
         }
 
@@ -25,6 +27,7 @@ public class Board : MonoBehaviour
         // Tile tile = GetLowestAllowedCount();
         // tile.Collapse();
         // Propagate(tile);
+        Go();
     }
 
     private void Go()
@@ -38,6 +41,7 @@ public class Board : MonoBehaviour
         {
             tile.Collapse();
             Propagate(tile);
+            Go();
         }
     }
 
