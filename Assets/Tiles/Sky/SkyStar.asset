@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 498522784737f284bbc09dbae6b5fd8b, type: 3}
+  m_Name: SkyStar
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 2665393443719122869, guid: 96792ec00d1da6947a4427af53a97098, type: 3}
+  upNeighbors:
+  - {fileID: 11400000, guid: 5d0c775cabfaecd5a87d7160957e32d5, type: 2}
+  rightNeighbors:
+  - {fileID: 11400000, guid: 5d0c775cabfaecd5a87d7160957e32d5, type: 2}
+  downNeighbors:
+  - {fileID: 11400000, guid: 5d0c775cabfaecd5a87d7160957e32d5, type: 2}
+  leftNeighbors:
+  - {fileID: 11400000, guid: 5d0c775cabfaecd5a87d7160957e32d5, type: 2}

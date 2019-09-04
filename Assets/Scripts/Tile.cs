@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile
@@ -30,25 +31,43 @@ public class Tile
         return count;
     }
 
+    public void PickTileManually(int index)
+    {
+        for (int i = 0; i < patterns.Length; i++)
+        {
+            if(i != index)
+            {
+                patterns[i].allowed = false;
+            }
+        }
+        Collapse();
+    }
+
     public bool Collapse()
     {
-        int tries = 0;
-        int defititePatter = Random.Range(0, patterns.Length);
-        while(patterns[defititePatter].allowed == false && tries < 100)
+        List<int> allowedPatterns = new List<int>();
+        for (int i = 0; i < patterns.Length; i++)
         {
-            defititePatter = Random.Range(0, patterns.Length);
-            tries++;
+            if(patterns[i].allowed == true)
+            {
+                allowedPatterns.Add(i);
+            }
         }
-        if(patterns[defititePatter].allowed == false)
+
+        if(allowedPatterns.Count <= 0)
         {
-            Debug.LogWarning("No solution found");
+            Debug.LogError("No allowed patterns to pick from.");
             return false;
         }
 
-        GameObject visual = new GameObject();
-        visual.AddComponent<MeshFilter>().sharedMesh = patterns[defititePatter].template.mesh;
-        visual.AddComponent<MeshRenderer>();
-        visual.transform.position = new Vector3(position.x, 0, position.y);
+        int index = Random.Range(0, allowedPatterns.Count);
+        finalPattern = patterns[allowedPatterns[index]];
+
+        GameObject visual = GameObject.Instantiate(finalPattern.template.prefab, (Vector2)position, Quaternion.identity);
+        // visual.AddComponent<MeshFilter>().sharedMesh = finalPattern.template.mesh;
+        // visual.AddComponent<MeshRenderer>();
+        // visual.transform.position = new Vector3(position.x, 0, position.y);
+        visual.name = finalPattern.template.name;
 
         return true;
     }
@@ -60,7 +79,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.upNeighbors, neightborTile.finalPattern) == -1)
+                if(System.Array.IndexOf(patterns[i].template.upNeighbors, neightborTile.finalPattern.template) == -1)
                 {
                     patterns[i].allowed = false;
                 }
@@ -71,7 +90,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.rightNeighbors, neightborTile.finalPattern) == -1)
+                if(System.Array.IndexOf(patterns[i].template.rightNeighbors, neightborTile.finalPattern.template) == -1)
                 {
                     patterns[i].allowed = false;
                 }
@@ -82,7 +101,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.downNeighbors, neightborTile.finalPattern) == -1)
+                if(System.Array.IndexOf(patterns[i].template.downNeighbors, neightborTile.finalPattern.template) == -1)
                 {
                     patterns[i].allowed = false;
                 }
@@ -93,7 +112,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.leftNeighbors, neightborTile.finalPattern) == -1)
+                if(System.Array.IndexOf(patterns[i].template.leftNeighbors, neightborTile.finalPattern.template) == -1)
                 {
                     patterns[i].allowed = false;
                 }

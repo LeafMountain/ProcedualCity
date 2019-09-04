@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 498522784737f284bbc09dbae6b5fd8b, type: 3}
+  m_Name: GrassLeftInnerCorner
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1547469838679015541, guid: f32a81f03675f634c9fc6a64b69fd9f7, type: 3}
+  upNeighbors:
+  - {fileID: 11400000, guid: 9a96b20b6b3597b409b3939858a37a83, type: 2}
+  - {fileID: 11400000, guid: 8a04cdeccac1e50468954a4afd134059, type: 2}
+  rightNeighbors:
+  - {fileID: 11400000, guid: b6a7e7a6cd460e04d82a904158c6b186, type: 2}
+  - {fileID: 11400000, guid: 835de0fd8e7e0024ab1ba7c5db306680, type: 2}
+  downNeighbors:
+  - {fileID: 11400000, guid: b6a7e7a6cd460e04d82a904158c6b186, type: 2}
+  leftNeighbors:
+  - {fileID: 11400000, guid: b85a2fa804768c29e8d504ee868e95b2, type: 2}
+  - {fileID: 11400000, guid: 9a96b20b6b3597b409b3939858a37a83, type: 2}
+  - {fileID: 11400000, guid: 41f38637eb30b9c469fcb251343cbaeb, type: 2}

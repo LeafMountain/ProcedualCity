@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: Ground
+  m_Name: GrassUp
   m_EditorClassIdentifier: Assembly-CSharp::PatternTemplate
-  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  prefab: {fileID: 4175014365828308437, guid: d36ea79e3926d8449a74a036ce23db25, type: 3}
   upNeighbors:
   - {fileID: 11400000, guid: 5d0c775cabfaecd5a87d7160957e32d5, type: 2}
-  - {fileID: 11400000}
   rightNeighbors:
-  - {fileID: 11400000}
+  - {fileID: 11400000, guid: a621476c8fb6ee948be0fae6d7db0e2d, type: 2}
+  - {fileID: 11400000, guid: 6f04ecbbcb9a782448f9b2a785e71355, type: 2}
   downNeighbors:
-  - {fileID: 11400000}
+  - {fileID: 11400000, guid: b6a7e7a6cd460e04d82a904158c6b186, type: 2}
   leftNeighbors:
-  - {fileID: 11400000}
+  - {fileID: 11400000, guid: 41f38637eb30b9c469fcb251343cbaeb, type: 2}
+  - {fileID: 11400000, guid: 9a96b20b6b3597b409b3939858a37a83, type: 2}

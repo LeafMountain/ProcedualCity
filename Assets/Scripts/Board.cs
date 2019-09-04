@@ -23,15 +23,29 @@ public class Board : MonoBehaviour
             }
         }
 
-        // Collapse
-        // Tile tile = GetLowestAllowedCount();
-        // tile.Collapse();
-        // Propagate(tile);
+        // Pick first tile
+        tiles[size.y / 3, size.y / 3].PickTileManually(3);
+        Propagate(tiles[size.y / 3, size.y / 3]);
+        int maxJ = Random.Range(1, size.y / 2);
+        for (int i = 0; i < size.x; i++)
+        {
+            for (int j = 0; j < Random.Range(1, size.y / 2); j++)
+            {
+                tiles[i, j].PickTileManually(0);
+                Propagate(tiles[i, j]);
+            }
+        }
         Go();
     }
 
     private void Go()
     {
+        StartCoroutine(Go2());
+    }
+
+    IEnumerator Go2()
+    {
+        yield return null;
         Tile tile = GetLowestAllowedCount();
         if(tile == null)
         {
@@ -50,25 +64,30 @@ public class Board : MonoBehaviour
         if(tile.position.y + 1 < size.y)
         {
             Tile upTile = tiles[tile.position.x, tile.position.y + 1];
-            upTile.SyncWithNeighbor(tile, Tile.Direction.down);
+            if(upTile.GetAllowedPatternsCount() > 0)
+                upTile.SyncWithNeighbor(tile, Tile.Direction.down);
         }
         if(tile.position.x + 1 < size.x)
         {
-            Tile upTile = tiles[tile.position.x + 1, tile.position.y];
-            upTile.SyncWithNeighbor(tile, Tile.Direction.left);
+            Tile rightTile = tiles[tile.position.x + 1, tile.position.y];
+            if(rightTile.GetAllowedPatternsCount() > 0)
+                rightTile.SyncWithNeighbor(tile, Tile.Direction.left);
         }
         if(tile.position.y - 1 >= 0)
         {
-            Tile upTile = tiles[tile.position.x, tile.position.y - 1];
-            upTile.SyncWithNeighbor(tile, Tile.Direction.up);
+            Tile downTile = tiles[tile.position.x, tile.position.y - 1];
+            if(downTile.GetAllowedPatternsCount() > 0)
+                downTile.SyncWithNeighbor(tile, Tile.Direction.up);
         }
         if(tile.position.x - 1 >= 0)
         {
-            Tile upTile = tiles[tile.position.x - 1, tile.position.y];
-            upTile.SyncWithNeighbor(tile, Tile.Direction.right);
+            Tile leftTile = tiles[tile.position.x - 1, tile.position.y];
+            if(leftTile.GetAllowedPatternsCount() > 0)
+                leftTile.SyncWithNeighbor(tile, Tile.Direction.right);
         }
     }
 
+    // Get the tiles with the lowest non zero count
     private Tile GetLowestAllowedCount()
     {
         Tile lowestAllowedCountTile = null;
@@ -87,11 +106,13 @@ public class Board : MonoBehaviour
                         continue;
                     }
                 }
-
-                int nextAllowedCount = tiles[x, y].GetAllowedPatternsCount();
-                if(nextAllowedCount > 0 && lowestAllowedCountTile.GetAllowedPatternsCount() > nextAllowedCount)
+                else
                 {
-                    lowestAllowedCountTile = tiles[x, y];
+                    int nextAllowedCount = tiles[x, y].GetAllowedPatternsCount();
+                    if(nextAllowedCount > 0 && lowestAllowedCountTile.GetAllowedPatternsCount() > nextAllowedCount)
+                    {
+                        lowestAllowedCountTile = tiles[x, y];
+                    }
                 }
             }
         }
