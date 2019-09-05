@@ -63,7 +63,9 @@ public class Tile
         int index = Random.Range(0, allowedPatterns.Count);
         finalPattern = patterns[allowedPatterns[index]];
 
-        GameObject visual = GameObject.Instantiate(finalPattern.template.prefab, (Vector2)position, Quaternion.identity);
+        GameObject visual = new GameObject();
+        visual.AddComponent<SpriteRenderer>().sprite = finalPattern.template.sprite;
+        visual.transform.position = (Vector2)position;
         // visual.AddComponent<MeshFilter>().sharedMesh = finalPattern.template.mesh;
         // visual.AddComponent<MeshRenderer>();
         // visual.transform.position = new Vector3(position.x, 0, position.y);
@@ -79,7 +81,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.upNeighbors, neightborTile.finalPattern.template) == -1)
+                if(patterns[i].template.upNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
                 }
@@ -90,7 +92,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.rightNeighbors, neightborTile.finalPattern.template) == -1)
+                if(patterns[i].template.rightNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
                 }
@@ -101,7 +103,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.downNeighbors, neightborTile.finalPattern.template) == -1)
+                if(patterns[i].template.downNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
                 }
@@ -112,7 +114,7 @@ public class Tile
             for (int i = 0; i < patterns.Length; i++)
             {
                 // Check if not contains
-                if(System.Array.IndexOf(patterns[i].template.leftNeighbors, neightborTile.finalPattern.template) == -1)
+                if(patterns[i].template.leftNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
                 }

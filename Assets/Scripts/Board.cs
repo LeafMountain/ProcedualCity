@@ -6,11 +6,14 @@ public class Board : MonoBehaviour
 {
     public Vector2Int size = Vector2Int.one;
     public PatternTemplate[] patterns = null;
+    public TemplateGenerator templateGenerator = null;
 
     private Tile[,] tiles = null;
 
     private void Start()
     {
+        patterns = templateGenerator.GenerateTemplate();
+
         // Initialize
         tiles = new Tile[size.x, size.y];
         for (int y = 0; y < size.y; y++)
@@ -23,18 +26,18 @@ public class Board : MonoBehaviour
             }
         }
 
-        // Pick first tile
-        tiles[size.y / 3, size.y / 3].PickTileManually(3);
-        Propagate(tiles[size.y / 3, size.y / 3]);
-        int maxJ = Random.Range(1, size.y / 2);
-        for (int i = 0; i < size.x; i++)
-        {
-            for (int j = 0; j < Random.Range(1, size.y / 2); j++)
-            {
-                tiles[i, j].PickTileManually(0);
-                Propagate(tiles[i, j]);
-            }
-        }
+        // // Pick first tile
+        // tiles[size.y / 3, size.y / 3].PickTileManually(3);
+        // Propagate(tiles[size.y / 3, size.y / 3]);
+        // int maxJ = Random.Range(1, size.y / 2);
+        // for (int i = 0; i < size.x; i++)
+        // {
+        //     for (int j = 0; j < Random.Range(1, size.y / 2); j++)
+        //     {
+        //         tiles[i, j].PickTileManually(0);
+        //         Propagate(tiles[i, j]);
+        //     }
+        // }
         Go();
     }
 
@@ -45,6 +48,7 @@ public class Board : MonoBehaviour
 
     IEnumerator Go2()
     {
+        // yield return new WaitForSeconds(0.05f);
         yield return null;
         Tile tile = GetLowestAllowedCount();
         if(tile == null)
