@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class TemplateGenerator : MonoBehaviour
 {
     public Texture2D referenceImage;
-    public Vector2Int gridSize = Vector2Int.one;
     public int pixelsPerTile = 16;
     public bool debug = false;
 
@@ -24,6 +23,10 @@ public class TemplateGenerator : MonoBehaviour
     {
         // Separate the tiles
         List<Sprite> tileSprites = new List<Sprite>();
+        Vector2Int gridSize = Vector2Int.zero;
+        gridSize.x = referenceImage.width / pixelsPerTile;
+        gridSize.y = referenceImage.height / pixelsPerTile;
+
         for (int y = 0; y < gridSize.y; y++)
         {
             for (int x = 0; x < gridSize.x; x++)
@@ -31,13 +34,6 @@ public class TemplateGenerator : MonoBehaviour
                 Vector2Int currentPosition = new Vector2Int(x * pixelsPerTile, y * pixelsPerTile);
                 Sprite tileSprite = Sprite.Create(referenceImage, new Rect(currentPosition.x, currentPosition.y, pixelsPerTile, pixelsPerTile), new Vector2(0.5f, 0.5f), pixelsPerTile);
                 tileSprites.Add(tileSprite);
-
-                // if(debug)
-                // {
-                //     GameObject tileGO = new GameObject();
-                //     tileGO.AddComponent<SpriteRenderer>().sprite = tileSprite;
-                //     tileGO.transform.position = new Vector2(x, y);
-                // }
             }
         }
 
@@ -63,32 +59,28 @@ public class TemplateGenerator : MonoBehaviour
             Color upMiddlePixel = currentTemplate.sprite.texture.GetPixel(currentUpMiddlePixelPosition.x, currentUpMiddlePixelPosition.y);
             Color upLeftPixel = currentTemplate.sprite.texture.GetPixel(currentUpLeftPixelPosition.x, currentUpLeftPixelPosition.y);
             Color upRightPixel = currentTemplate.sprite.texture.GetPixel(currentUpRightPixelPosition.x, currentUpRightPixelPosition.y);
+            
+            currentTemplate.upIdentifier = Animator.StringToHash(upMiddlePixel.ToString() + upLeftPixel.ToString() + upRightPixel.ToString());
 
-            // currentTemplate.sprite.texture.SetPixel(currentUpRightPixelPosition.x, currentUpRightPixelPosition.y, Color.red);
-            // currentTemplate.sprite.texture.SetPixel(currentUpMiddlePixelPosition.x, currentUpMiddlePixelPosition.y, Color.red);
-            // currentTemplate.sprite.texture.SetPixel(currentUpLeftPixelPosition.x, currentUpLeftPixelPosition.y, Color.red);
+            Color rightMiddlePixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.center.y);
+            Color rightTopPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.max.y - 1);
+            Color rightBottomPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.min.y);
 
+            currentTemplate.rightIdentifier = Animator.StringToHash(rightMiddlePixel.ToString() + rightTopPixel.ToString() + rightBottomPixel.ToString());
+            
             for (int i = 0; i < templates.Count; i++)
             {
-                // Check if top middle pixel fits
                 {
-                    Color neighborDownMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.center.x, (int)templates[i].sprite.textureRect.min.y);
-                    // currentTemplate.sprite.texture.SetPixel((int)templates[i].sprite.textureRect.center.x, (int)templates[i].sprite.textureRect.min.y, Color.red);
+                    if(templates[i].downIdentifier == 0)
+                    {
+                        Color neighborDownMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.center.x, (int)templates[i].sprite.textureRect.min.y);
+                        Color neighborDownLeftPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y);
+                        Color neighborDownRightPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.max.x - 1, (int)templates[i].sprite.textureRect.min.y);
+                        templates[i].downIdentifier = Animator.StringToHash(neighborDownMiddlePixel.ToString() + neighborDownLeftPixel.ToString() + neighborDownRightPixel.ToString());
+                    }
+                    
 
-                    Color neighborDownLeftPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y);
-                    // currentTemplate.sprite.texture.SetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y, Color.red);
-
-                    Color neighborDownRightPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.max.x - 1, (int)templates[i].sprite.textureRect.min.y);
-                    // currentTemplate.sprite.texture.SetPixel((int)templates[i].sprite.textureRect.max.x - 1, (int)templates[i].sprite.textureRect.min.y, Color.red);
-
-                    // currentTemplate.sprite.texture.Apply();
-
-                    // You only need to check up and right since you are filling in the neighbors at the same time
-
-                    if(upMiddlePixel == neighborDownMiddlePixel 
-                    && upLeftPixel == neighborDownLeftPixel 
-                    && upRightPixel == neighborDownRightPixel
-                    )
+                    if(currentTemplate.upIdentifier == templates[i].downIdentifier)
                     {
                         if(currentTemplate.upNeighbors.Contains(templates[i]) == false)
                         {
@@ -98,35 +90,18 @@ public class TemplateGenerator : MonoBehaviour
                     }
                 }
 
-                // Check if right middle pixel fits
                 {
-                    Color rightMiddlePixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.center.y);
-                    Color neighborleftMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.center.y);
-                    // currentTemplate.sprite.texture.SetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.center.y, Color.magenta);
-                    // currentTemplate.sprite.texture.SetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.center.y, Color.magenta);
-
-
-                    Color rightTopPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.max.y - 1);
-                    Color neighborleftTopPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.max.y - 1);
-                    // currentTemplate.sprite.texture.SetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.max.y - 1, Color.magenta);
-                    // currentTemplate.sprite.texture.SetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.max.y - 1, Color.magenta);
-
-
-
-                    Color rightBottomPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.min.y);
-                    Color neighborleftBottomPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y);
-                    // currentTemplate.sprite.texture.SetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.min.y, Color.magenta);
-                    // currentTemplate.sprite.texture.SetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y, Color.magenta);
-
+                    if(templates[i].leftIdentifier == 0)
+                    {
+                        Color neighborleftMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.center.y);
+                        Color neighborleftTopPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.max.y - 1);
+                        Color neighborleftBottomPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y);
+                        templates[i].leftIdentifier = Animator.StringToHash(neighborleftMiddlePixel.ToString() + neighborleftTopPixel.ToString() + neighborleftBottomPixel.ToString());
+                    }
 
                     // You only need to check up and right since you are filling in the neighbors at the same time
 
-                    // BUGG: Checking the whole texture not just the middle of the sprite
-                    if(rightMiddlePixel == neighborleftMiddlePixel 
-                    &&
-                    rightTopPixel == neighborleftTopPixel &&
-                    rightBottomPixel == neighborleftBottomPixel
-                    )    // Check more pixels, not just the middle
+                    if(currentTemplate.rightIdentifier == templates[i].leftIdentifier)
                     {
                         currentTemplate.rightNeighbors.Add(templates[i]);
                         templates[i].leftNeighbors.Add(currentTemplate);
@@ -150,12 +125,13 @@ public class TemplateGenerator : MonoBehaviour
                     go.transform.position = new Vector2(j, i * 3);
 
                     GameObject go2 = new GameObject();
-                    go2.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
+                    go2.AddComponent<SpriteRenderer>().sprite = templates[i].upNeighbors[j].sprite;
                     go2.transform.position = new Vector2(j, 1 + i * 3);
                 }
             }
         }
 
+        Debug.Log("Template done");
         return templates.ToArray();
     }
 }

@@ -45,12 +45,13 @@ public class Tile
 
     public bool Collapse()
     {
-        List<int> allowedPatterns = new List<int>();
+        // Gather all the allowed patterns
+        List<Pattern> allowedPatterns = new List<Pattern>();
         for (int i = 0; i < patterns.Length; i++)
         {
             if(patterns[i].allowed == true)
             {
-                allowedPatterns.Add(i);
+                allowedPatterns.Add(patterns[i]);
             }
         }
 
@@ -60,15 +61,28 @@ public class Tile
             return false;
         }
 
+        // Find the least used pattern
+        // allowedPatterns.Sort(delegate(Pattern pat1, Pattern pat2){
+        //     if(pat1.template.timesUsed < pat2.template.timesUsed)
+        //     {
+        //         return -1;
+        //     }
+        //     if(pat1.template.timesUsed > pat2.template.timesUsed)
+        //     {
+        //         return 1;
+        //     }
+        //     return 0;
+        // });
+
+        // int lastIndexOfLeastUsed = allowedPatterns.FindLastIndex(0, patternIndex => patternIndex == allowedPatterns[0]);
         int index = Random.Range(0, allowedPatterns.Count);
-        finalPattern = patterns[allowedPatterns[index]];
+
+        finalPattern = allowedPatterns[index];
+        finalPattern.template.timesUsed++;
 
         GameObject visual = new GameObject();
         visual.AddComponent<SpriteRenderer>().sprite = finalPattern.template.sprite;
         visual.transform.position = (Vector2)position;
-        // visual.AddComponent<MeshFilter>().sharedMesh = finalPattern.template.mesh;
-        // visual.AddComponent<MeshRenderer>();
-        // visual.transform.position = new Vector3(position.x, 0, position.y);
         visual.name = finalPattern.template.name;
 
         return true;

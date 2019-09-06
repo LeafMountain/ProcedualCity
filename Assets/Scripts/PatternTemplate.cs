@@ -18,6 +18,13 @@ public class PatternTemplate : ScriptableObject
     // }
     // public bool allowed = true;
     public Sprite sprite = null;
+    public int timesUsed = 0;
+
+    public int upIdentifier = 0;
+    public int rightIdentifier = 0;
+    public int downIdentifier = 0;
+    public int leftIdentifier = 0;
+
 
     // Neighbors allowed
     public List<PatternTemplate> upNeighbors = new List<PatternTemplate>();
