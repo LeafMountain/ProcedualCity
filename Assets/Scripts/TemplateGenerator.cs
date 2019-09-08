@@ -8,6 +8,9 @@ public class TemplateGenerator : MonoBehaviour
     public Texture2D referenceImage;
     public int pixelsPerTile = 16;
     public bool debug = false;
+    public Vector2Int middleCheckOffset = Vector2Int.zero;
+    public Vector2Int horizontalOffset = Vector2Int.zero;
+    public Vector2Int verticalOffest = Vector2Int.zero;
 
     public List<PatternTemplate> templates = new List<PatternTemplate>();
 
@@ -53,18 +56,18 @@ public class TemplateGenerator : MonoBehaviour
         for (int j = 0; j < templates.Count; j++)
         {
             PatternTemplate currentTemplate = templates[j];
-            Vector2Int currentUpMiddlePixelPosition = new Vector2Int((int)currentTemplate.sprite.textureRect.center.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
-            Vector2Int currentUpLeftPixelPosition = new Vector2Int((int)currentTemplate.sprite.textureRect.min.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
-            Vector2Int currentUpRightPixelPosition = new Vector2Int((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.max.y - 1);
+            Vector2Int currentUpMiddlePixelPosition = new Vector2Int((int)currentTemplate.sprite.textureRect.center.x + middleCheckOffset.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
+            Vector2Int currentUpLeftPixelPosition = new Vector2Int((int)currentTemplate.sprite.textureRect.min.x + verticalOffest.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
+            Vector2Int currentUpRightPixelPosition = new Vector2Int((int)currentTemplate.sprite.textureRect.max.x - 1 + verticalOffest.y, (int)currentTemplate.sprite.textureRect.max.y - 1);
             Color upMiddlePixel = currentTemplate.sprite.texture.GetPixel(currentUpMiddlePixelPosition.x, currentUpMiddlePixelPosition.y);
             Color upLeftPixel = currentTemplate.sprite.texture.GetPixel(currentUpLeftPixelPosition.x, currentUpLeftPixelPosition.y);
             Color upRightPixel = currentTemplate.sprite.texture.GetPixel(currentUpRightPixelPosition.x, currentUpRightPixelPosition.y);
             
             currentTemplate.upIdentifier = Animator.StringToHash(upMiddlePixel.ToString() + upLeftPixel.ToString() + upRightPixel.ToString());
 
-            Color rightMiddlePixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.center.y);
-            Color rightTopPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.max.y - 1);
-            Color rightBottomPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.min.y);
+            Color rightMiddlePixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.center.y + middleCheckOffset.y);
+            Color rightTopPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.max.y - 1 + horizontalOffset.x);
+            Color rightBottomPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1, (int)currentTemplate.sprite.textureRect.min.y + horizontalOffset.y);
 
             currentTemplate.rightIdentifier = Animator.StringToHash(rightMiddlePixel.ToString() + rightTopPixel.ToString() + rightBottomPixel.ToString());
             
@@ -73,9 +76,9 @@ public class TemplateGenerator : MonoBehaviour
                 {
                     if(templates[i].downIdentifier == 0)
                     {
-                        Color neighborDownMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.center.x, (int)templates[i].sprite.textureRect.min.y);
-                        Color neighborDownLeftPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y);
-                        Color neighborDownRightPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.max.x - 1, (int)templates[i].sprite.textureRect.min.y);
+                        Color neighborDownMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.center.x + middleCheckOffset.x, (int)templates[i].sprite.textureRect.min.y);
+                        Color neighborDownLeftPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x + verticalOffest.x, (int)templates[i].sprite.textureRect.min.y);
+                        Color neighborDownRightPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.max.x - 1 + verticalOffest.y, (int)templates[i].sprite.textureRect.min.y);
                         templates[i].downIdentifier = Animator.StringToHash(neighborDownMiddlePixel.ToString() + neighborDownLeftPixel.ToString() + neighborDownRightPixel.ToString());
                     }
                     
@@ -93,9 +96,9 @@ public class TemplateGenerator : MonoBehaviour
                 {
                     if(templates[i].leftIdentifier == 0)
                     {
-                        Color neighborleftMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.center.y);
-                        Color neighborleftTopPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.max.y - 1);
-                        Color neighborleftBottomPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y);
+                        Color neighborleftMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.center.y + middleCheckOffset.y);
+                        Color neighborleftTopPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.max.y - 1 + horizontalOffset.x);
+                        Color neighborleftBottomPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x, (int)templates[i].sprite.textureRect.min.y + horizontalOffset.y);
                         templates[i].leftIdentifier = Animator.StringToHash(neighborleftMiddlePixel.ToString() + neighborleftTopPixel.ToString() + neighborleftBottomPixel.ToString());
                     }
 

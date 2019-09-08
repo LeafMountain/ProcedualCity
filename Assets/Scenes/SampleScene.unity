@@ -211,6 +211,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &956987443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 956987445}
+  - component: {fileID: 956987444}
+  m_Layer: 0
+  m_Name: MeshModuleGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &956987444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956987443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87e07c99337ed0b4ba477fec6057c7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 7168462448021921000, guid: 80fcf7e7da9e831468c7c10841083c50, type: 3}
+  sizePerTile: {x: 2, y: 1, z: 2}
+--- !u!4 &956987445
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956987443}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,7 +355,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1831380407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -323,7 +368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06d0f0affb0bb9a498a6e4f50d51d191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 20, y: 10}
+  size: {x: 10, y: 10}
   patterns:
   - {fileID: 11400000, guid: b6a7e7a6cd460e04d82a904158c6b186, type: 2}
   - {fileID: 11400000, guid: 6f04ecbbcb9a782448f9b2a785e71355, type: 2}
@@ -335,9 +380,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8a04cdeccac1e50468954a4afd134059, type: 2}
   - {fileID: 11400000, guid: 835de0fd8e7e0024ab1ba7c5db306680, type: 2}
   templateGenerator: {fileID: 1869534816}
-  timeBetweenCollapse: 0.01
+  timeBetweenCollapse: 0
   use: 0
-  position: {x: 0, y: 0}
+  position: {x: -2, y: 2}
   templateIndex: 7
 --- !u!4 &1831380408
 Transform:
@@ -369,7 +414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1869534815
 Transform:
   m_ObjectHideFlags: 0
@@ -396,7 +441,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da139040460472d4e85931498c904a78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  referenceImage: {fileID: 2800000, guid: fd13ccaf763a1cd4183d346cbdcc58fd, type: 3}
+  referenceImage: {fileID: 2800000, guid: 9e947b49957984e4e9fe2e9172fcf32f, type: 3}
   pixelsPerTile: 32
   debug: 0
+  middleCheckOffset: {x: 0, y: 0}
+  horizontalOffset: {x: -3, y: 3}
+  verticalOffest: {x: 3, y: -3}
   templates: []
