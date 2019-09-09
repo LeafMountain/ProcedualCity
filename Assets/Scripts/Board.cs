@@ -1,57 +1,73 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    public Vector2Int size = Vector2Int.one;
-    public PatternTemplate[] patterns = null;
-    public TemplateGenerator templateGenerator = null;
+    public Vector3Int size = Vector3Int.one;
+    public Module[] patterns = null;
+    public Generator templateGenerator = null;
+    public Material defaultMaterial = null;
+
+    [Header("Other")]
+
     public float timeBetweenCollapse = 0;
 
     [Header("First Tile")]
-    public bool use = false;
-    public Vector2Int position = Vector2Int.zero;
+    public bool pickFirstTile = false;
+    public Vector3Int position = Vector3Int.zero;
     public int templateIndex = 0;
+    public bool startWithGround = false;
 
-    private Tile[,] tiles = null;
+    private Slot[,,] slots = null;
 
     private void Start()
     {
         patterns = templateGenerator.GenerateTemplate();
-        foreach(PatternTemplate pattern in patterns)
+        foreach(Module pattern in patterns)
         {
             pattern.timesUsed = 0;
         }
-
+        
         // Initialize
-        tiles = new Tile[size.x, size.y];
-        for (int y = 0; y < size.y; y++)
+        slots = new Slot[size.x, size.y, size.z];
+        for (int z = 0; z < size.z; z++)
         {
-            for (int x = 0; x < size.x; x++)
+            for (int y = 0; y < size.y; y++)
             {
-                tiles[x, y] = new Tile();
-                tiles[x, y].position = new Vector2Int(x, y);
-                tiles[x, y].AddPatternTemplates(patterns);
+                for (int x = 0; x < size.x; x++)
+                {
+                    slots[x, y, z] = new Slot();
+                    slots[x, y, z].position = new Vector3Int(x, y, z);
+                    slots[x, y, z].AddPatternTemplates(patterns);
+                }
             }
         }
 
-        // Pick first tile
-        if(use == true)
+        if(pickFirstTile == true)
         {
-            tiles[0,0].PickTileManually(templateIndex);
-            Propagate(tiles[position.x, position.y]);
+            slots[position.x, position.y, position.z].PickTileManually(templateIndex);
+            Propagate(slots[position.x, position.y, position.z]);
         }
-        // int maxJ = Random.Range(1, size.y / 2);
-        // for (int i = 0; i < size.x; i++)
-        // {
-        //     for (int j = 0; j < Random.Range(1, size.y / 2); j++)
-        //     {
-        //         tiles[i, j].PickTileManually(0);
-        //         Propagate(tiles[i, j]);
-        //     }
-        // }
+
+        if(startWithGround == true)
+        {
+            FillGround();
+        }
+
         Go();
+    }
+
+    public void FillGround()
+    {
+        int maxJ = Random.Range(1, size.y / 2);
+        for (int i = 0; i < size.x; i++)
+        {
+            for (int j = 0; j < Random.Range(1, size.y / 2); j++)
+            {
+                slots[i, j, 0].PickTileManually(0);
+                Propagate(slots[i, j, 0]);
+            }
+        }
     }
 
     private void Go()
@@ -68,14 +84,13 @@ public class Board : MonoBehaviour
 
     IEnumerator Go2()
     {
-        // yield return new WaitForSeconds(0.05f);
         yield return new WaitForSeconds(timeBetweenCollapse);
         DoYourStuff();
     }
 
     private void DoYourStuff()
     {
-        Tile tile = GetLowestAllowedCount();
+        Slot tile = GetLowestAllowedCount();
         if(tile == null)
         {
             Debug.Log("COLLAPSE DONE");
@@ -88,65 +103,70 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void Propagate(Tile tile)
+    private void Propagate(Slot slot)
     {
-        if(tile.position.y + 1 < size.y)
+        if(slot.position.y + 1 < size.y)
         {
-            Tile upTile = tiles[tile.position.x, tile.position.y + 1];
-            if(upTile.GetAllowedPatternsCount() > 0)
-                upTile.SyncWithNeighbor(tile, Tile.Direction.down);
+            Slot upSlot = slots[slot.position.x, slot.position.y + 1, slot.position.z];
+            if(upSlot.GetAllowedPatternsCount() > 0)
+                upSlot.SyncWithNeighbor(slot, Direction.down);
         }
-        if(tile.position.x + 1 < size.x)
+        if(slot.position.x + 1 < size.x)
         {
-            Tile rightTile = tiles[tile.position.x + 1, tile.position.y];
-            if(rightTile.GetAllowedPatternsCount() > 0)
-                rightTile.SyncWithNeighbor(tile, Tile.Direction.left);
+            Slot rightSlot = slots[slot.position.x + 1, slot.position.y, slot.position.z];
+            if(rightSlot.GetAllowedPatternsCount() > 0)
+                rightSlot.SyncWithNeighbor(slot, Direction.left);
         }
-        if(tile.position.y - 1 >= 0)
+        if(slot.position.y - 1 >= 0)
         {
-            Tile downTile = tiles[tile.position.x, tile.position.y - 1];
-            if(downTile.GetAllowedPatternsCount() > 0)
-                downTile.SyncWithNeighbor(tile, Tile.Direction.up);
+            Slot downSlot = slots[slot.position.x, slot.position.y - 1, slot.position.z];
+            if(downSlot.GetAllowedPatternsCount() > 0)
+                downSlot.SyncWithNeighbor(slot, Direction.up);
         }
-        if(tile.position.x - 1 >= 0)
+        if(slot.position.x - 1 >= 0)
         {
-            Tile leftTile = tiles[tile.position.x - 1, tile.position.y];
-            if(leftTile.GetAllowedPatternsCount() > 0)
-                leftTile.SyncWithNeighbor(tile, Tile.Direction.right);
+            Slot leftSlot = slots[slot.position.x - 1, slot.position.y, slot.position.z];
+            if(leftSlot.GetAllowedPatternsCount() > 0)
+                leftSlot.SyncWithNeighbor(slot, Direction.right);
+        }
+        if(slot.position.z + 1 < size.z)
+        {
+            Slot forwardSlot = slots[slot.position.x, slot.position.y, slot.position.z + 1];
+            if(forwardSlot.GetAllowedPatternsCount() > 0)
+                forwardSlot.SyncWithNeighbor(slot, Direction.back);
+        }
+        if(slot.position.z - 1 >= 0)
+        {
+            Slot backSlot = slots[slot.position.x, slot.position.y, slot.position.z - 1];
+            if(backSlot.GetAllowedPatternsCount() > 0)
+                backSlot.SyncWithNeighbor(slot, Direction.forward);
         }
     }
 
     // Get the tiles with the lowest non zero count
-    private Tile GetLowestAllowedCount()
-    {
-        Tile lowestAllowedCountTile = null;
-        for (int y = 0; y < size.y; y++)
-        {
-            for (int x = 0; x < size.x; x++)
-            {
-                if(lowestAllowedCountTile == null)
-                {
-                    if(tiles[x, y].GetAllowedPatternsCount() > 0)
-                    {
-                        lowestAllowedCountTile = tiles[x, y];
+    private Slot GetLowestAllowedCount() {
+        Slot lowestAllowedCountSlot = null;
+        for (int z = 0; z < size.z; z++) {
+            for (int y = 0; y < size.y; y++) {
+                for (int x = 0; x < size.x; x++) {
+                    if(lowestAllowedCountSlot == null) {
+                        if(slots[x, y, z].GetAllowedPatternsCount() > 0) {
+                            lowestAllowedCountSlot = slots[x, y, z];
+                        }
+                        else {
+                            continue;
+                        }
                     }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    int nextAllowedCount = tiles[x, y].GetAllowedPatternsCount();
-                    if(nextAllowedCount > 0 && lowestAllowedCountTile.GetAllowedPatternsCount() > nextAllowedCount)
-                    {
-                        lowestAllowedCountTile = tiles[x, y];
+                    else {
+                        int nextAllowedCount = slots[x, y, z].GetAllowedPatternsCount();
+                        if(nextAllowedCount > 0 && lowestAllowedCountSlot.GetAllowedPatternsCount() > nextAllowedCount) {
+                            lowestAllowedCountSlot = slots[x, y, z];
+                        }
                     }
                 }
             }
         }
 
-        return lowestAllowedCountTile;
+        return lowestAllowedCountSlot;
     }
-
 }

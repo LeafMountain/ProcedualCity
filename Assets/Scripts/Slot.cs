@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tile
+public enum Direction
+{
+    up, down, left, right, forward, back
+}
+
+public class Slot
 {
     public Pattern[] patterns = null;
     public Pattern finalPattern = null;
-    public Vector2Int position = new Vector2Int(-1, -1);
-
-    public void Init (Pattern[] patterns)
-    {
-        this.patterns = patterns;
-    }
+    public Vector3Int position = new Vector3Int(-1, -1, -1);
 
     public int GetAllowedPatternsCount()
     {
@@ -61,40 +61,24 @@ public class Tile
             return false;
         }
 
-        // Find the least used pattern
-        // allowedPatterns.Sort(delegate(Pattern pat1, Pattern pat2){
-        //     if(pat1.template.timesUsed < pat2.template.timesUsed)
-        //     {
-        //         return -1;
-        //     }
-        //     if(pat1.template.timesUsed > pat2.template.timesUsed)
-        //     {
-        //         return 1;
-        //     }
-        //     return 0;
-        // });
-
-        // int lastIndexOfLeastUsed = allowedPatterns.FindLastIndex(0, patternIndex => patternIndex == allowedPatterns[0]);
         int index = Random.Range(0, allowedPatterns.Count);
 
         finalPattern = allowedPatterns[index];
         finalPattern.template.timesUsed++;
 
-        GameObject visual = new GameObject();
-        visual.AddComponent<SpriteRenderer>().sprite = finalPattern.template.sprite;
-        visual.transform.position = (Vector2)position;
+        GameObject visual = finalPattern.GetVisual();
+        visual.transform.position = (Vector3)position;
         visual.name = finalPattern.template.name;
 
         return true;
     }
 
-    public void SyncWithNeighbor(Tile neightborTile, Direction neighborDirection)
+    public void SyncWithNeighbor(Slot neightborTile, Direction neighborDirection)
     {
         if(neighborDirection == Direction.up)
         {
             for (int i = 0; i < patterns.Length; i++)
             {
-                // Check if not contains
                 if(patterns[i].template.upNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
@@ -105,7 +89,6 @@ public class Tile
         {
             for (int i = 0; i < patterns.Length; i++)
             {
-                // Check if not contains
                 if(patterns[i].template.rightNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
@@ -116,7 +99,6 @@ public class Tile
         {
             for (int i = 0; i < patterns.Length; i++)
             {
-                // Check if not contains
                 if(patterns[i].template.downNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
@@ -127,8 +109,27 @@ public class Tile
         {
             for (int i = 0; i < patterns.Length; i++)
             {
-                // Check if not contains
                 if(patterns[i].template.leftNeighbors.Contains(neightborTile.finalPattern.template) == false)
+                {
+                    patterns[i].allowed = false;
+                }
+            }
+        }
+        else if(neighborDirection == Direction.forward)
+        {
+            for (int i = 0; i < patterns.Length; i++)
+            {
+                if(patterns[i].template.forwardNeighbors.Contains(neightborTile.finalPattern.template) == false)
+                {
+                    patterns[i].allowed = false;
+                }
+            }
+        }
+        else if(neighborDirection == Direction.back)
+        {
+            for (int i = 0; i < patterns.Length; i++)
+            {
+                if(patterns[i].template.backNeighbors.Contains(neightborTile.finalPattern.template) == false)
                 {
                     patterns[i].allowed = false;
                 }
@@ -136,7 +137,7 @@ public class Tile
         }
     }
 
-    public void AddPatternTemplates(PatternTemplate[] templates)
+    public void AddPatternTemplates(Module[] templates)
     {
         patterns = new Pattern[templates.Length];
         for (int i = 0; i < patterns.Length; i++)
@@ -144,13 +145,5 @@ public class Tile
             patterns[i] = new Pattern(templates[i]);
             patterns[i].allowed = true;
         }
-    }
-
-    public enum Direction
-    {
-        up,
-        right,
-        down,
-        left
     }
 }
