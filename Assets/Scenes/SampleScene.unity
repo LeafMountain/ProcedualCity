@@ -240,8 +240,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87e07c99337ed0b4ba477fec6057c7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 7168462448021921000, guid: 80fcf7e7da9e831468c7c10841083c50, type: 3}
-  sizePerTile: {x: 2, y: 1, z: 2}
+  meshes:
+  - {fileID: 7168462448021921000, guid: 80fcf7e7da9e831468c7c10841083c50, type: 3}
+  - {fileID: 8909316453311620501, guid: 80fcf7e7da9e831468c7c10841083c50, type: 3}
+  sizePerTile: {x: 1, y: 1, z: 1}
 --- !u!4 &956987445
 Transform:
   m_ObjectHideFlags: 0
