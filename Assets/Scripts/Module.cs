@@ -10,8 +10,8 @@ public class Module : ScriptableObject
     public int timesUsed = 0;
 
     public int upIdentifier = 0;
-    public int rightIdentifier = 0;
     public int downIdentifier = 0;
+    public int rightIdentifier = 0;
     public int leftIdentifier = 0;
     public int forwardIdentifier = 0;
     public int backIdentifier = 0;
