@@ -6,6 +6,7 @@ public class Module : ScriptableObject
 {
     public Sprite sprite = null;
     public Mesh mesh = null;
+    public Material material = null;
 
     public int timesUsed = 0;
 

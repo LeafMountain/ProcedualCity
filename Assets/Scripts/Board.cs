@@ -105,23 +105,11 @@ public class Board : MonoBehaviour
 
     private void Propagate(Slot slot)
     {
-        if(slot.position.y + 1 < size.y)
-        {
-            Slot upSlot = slots[slot.position.x, slot.position.y + 1, slot.position.z];
-            if(upSlot.GetAllowedPatternsCount() > 0)
-                upSlot.SyncWithNeighbor(slot, Direction.down);
-        }
         if(slot.position.x + 1 < size.x)
         {
             Slot rightSlot = slots[slot.position.x + 1, slot.position.y, slot.position.z];
             if(rightSlot.GetAllowedPatternsCount() > 0)
                 rightSlot.SyncWithNeighbor(slot, Direction.left);
-        }
-        if(slot.position.y - 1 >= 0)
-        {
-            Slot downSlot = slots[slot.position.x, slot.position.y - 1, slot.position.z];
-            if(downSlot.GetAllowedPatternsCount() > 0)
-                downSlot.SyncWithNeighbor(slot, Direction.up);
         }
         if(slot.position.x - 1 >= 0)
         {
@@ -129,6 +117,20 @@ public class Board : MonoBehaviour
             if(leftSlot.GetAllowedPatternsCount() > 0)
                 leftSlot.SyncWithNeighbor(slot, Direction.right);
         }
+
+        if(slot.position.y + 1 < size.y)
+        {
+            Slot upSlot = slots[slot.position.x, slot.position.y + 1, slot.position.z];
+            if(upSlot.GetAllowedPatternsCount() > 0)
+                upSlot.SyncWithNeighbor(slot, Direction.down);
+        }
+        if(slot.position.y - 1 >= 0)
+        {
+            Slot downSlot = slots[slot.position.x, slot.position.y - 1, slot.position.z];
+            if(downSlot.GetAllowedPatternsCount() > 0)
+                downSlot.SyncWithNeighbor(slot, Direction.up);
+        }
+        
         if(slot.position.z + 1 < size.z)
         {
             Slot forwardSlot = slots[slot.position.x, slot.position.y, slot.position.z + 1];

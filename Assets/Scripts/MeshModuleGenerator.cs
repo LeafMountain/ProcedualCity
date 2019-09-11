@@ -24,74 +24,7 @@ public class MeshModuleGenerator : Generator
         List<Module> modules = new List<Module>();
         for (int i = 0; i < meshes.Length; i++)
         {
-            List<Vector3> verts = GetViableVerts(meshes[i]);            
-            List<Vector3> left = new List<Vector3>();
-            List<Vector3> right = new List<Vector3>();
-            List<Vector3> back = new List<Vector3>();
-            List<Vector3> forward = new List<Vector3>();
-            List<Vector3> up = new List<Vector3>();
-            List<Vector3> down = new List<Vector3>();
-
-            // get all the sides verts
-            for (int j = 0; j < verts.Count; j++)
-            {
-                // LEFT side of the shape
-                if(verts[j].x == -(sizePerTile.x * .5f))
-                {
-                    Vector3 vert = verts[j];
-                    vert.x = 0;
-                    left.Add(vert);
-                }
-                // RIGHT side of the shape
-                else if(verts[j].x == sizePerTile.x * .5f)
-                {
-                    Vector3 vert = verts[j];
-                    vert.x = 0;
-                    right.Add(vert);
-                }
-
-                // DOWN side of the shape
-                if(verts[j].y == -sizePerTile.y * .5f)
-                {
-                    Vector3 vert = verts[j];
-                    vert.y = 0;
-                    down.Add(vert);
-                }
-                // UP side of the shape
-                else if(verts[j].y == sizePerTile.y * .5f)
-                {
-                    Vector3 vert = verts[j];
-                    vert.y = 0;
-                    up.Add(vert);
-                }
-
-                // BACK side of the shape
-                if(verts[j].z == -sizePerTile.z * .5f)
-                {
-                    Vector3 vert = verts[j];
-                    vert.z = 0;
-                    back.Add(vert);
-                }
-                // FORWARD side of the shape
-                else if(verts[j].z == sizePerTile.z * .5f)
-                {
-                    Vector3 vert = verts[j];
-                    vert.z = 0;
-                    forward.Add(vert);
-                }
-            }
-
-            // hash and save them into a new module
-            Module module = new Module();
-            module.mesh = meshes[i];
-            module.forwardIdentifier = CreateHash(forward);
-            module.rightIdentifier = CreateHash(right);
-            module.backIdentifier = CreateHash(back);
-            module.leftIdentifier = CreateHash(left);
-            module.downIdentifier = CreateHash(down);
-            module.upIdentifier = CreateHash(up);
-            module.name = module.mesh.name;
-            modules.Add(module);
+            modules.Add(CreateModule(meshes[i]));
         }
 
         for (int i = 0; i < modules.Count; i++)
@@ -106,6 +39,14 @@ public class MeshModuleGenerator : Generator
                     {
                         currentModule.forwardNeighbors.Add(modules[j]);
                         modules[j].backNeighbors.Add(currentModule);
+                    }
+                }
+                if(currentModule.upIdentifier == modules[j].downIdentifier)
+                {
+                    if(currentModule.upNeighbors.Contains(modules[j]) == false)
+                    {
+                        currentModule.upNeighbors.Add(modules[j]);
+                        modules[j].downNeighbors.Add(currentModule);
                     }
                 }
                 if(currentModule.rightIdentifier == modules[j].leftIdentifier)
@@ -124,44 +65,9 @@ public class MeshModuleGenerator : Generator
 
     private int CreateHash(List<Vector3> verts)
     {
-        verts.Sort(delegate (Vector3 vert1, Vector3 vert2) {
-            if(vert1.x == vert2.x)
-            {
-                if(vert1.y == vert2.y)
-                {
-                    if(vert1.z == vert2.z)
-                    {
-                        return 0;
-                    }
-                    else if(vert1.z < vert2.z)
-                    {
-                        return -1;
-                    }
-                    else if(vert1.z > vert2.z)
-                    {
-                        return 1;
-                    }
-                }
-                else if(vert1.y < vert2.y)
-                {
-                    return -1;
-                }
-                else if(vert1.y > vert2.y)
-                {
-                    return 1;
-                }
-            }
-            else if(vert1.x < vert2.x)
-            {
-                return -1;
-            }
-            else if(vert1.x > vert2.x)
-            {
-                return 1;
-            }
+        // verts.Sort(Vector3Sort);
 
-            return 0;
-        });
+
         string combined = string.Empty;
         for (int i = 0; i < verts.Count; i++)
         {
@@ -170,50 +76,139 @@ public class MeshModuleGenerator : Generator
         return Animator.StringToHash(combined);
     }
 
-    private List<Vector3> GetViableVerts(Mesh mesh)
+    private Module CreateModule(Mesh mesh)
     {
         List<Vector3> verts = new List<Vector3>();
         mesh.GetVertices(verts);
         verts = verts.Distinct().ToList();
-        List<Vector3> verts2 = new List<Vector3>();
-        Vector3 halfSizePerTile = sizePerTile * .5f;
-        float allowedDiff = 0.1f;
+        for (int i = 0; i < verts.Count; i++)
+        {
+            Vector3 vert = verts[i];
+            vert.x = (float)System.Math.Round(verts[i].x, 2);
+            vert.y = (float)System.Math.Round(verts[i].y, 2);
+            vert.z = (float)System.Math.Round(verts[i].z, 2);
+            verts[i] = vert;
+        }
+
+        float allowedDiff = 0f;
 
         List<Vector3> left = new List<Vector3>();
         List<Vector3> right = new List<Vector3>();
         List<Vector3> back = new List<Vector3>();
         List<Vector3> forward = new List<Vector3>();
         List<Vector3> up = new List<Vector3>();
-        List<Vector3> down = new List<Vector3>();
+        List<Vector3> down = new List<Vector3>();        
 
         for (int i = verts.Count - 1; i >= 0; i--)
         {
-            if(Mathf.Abs(verts[i].x - (mesh.bounds.center - halfSizePerTile).x) < allowedDiff || Mathf.Abs(verts[i].x - (mesh.bounds.center + halfSizePerTile).x) < allowedDiff
-            || Mathf.Abs(verts[i].y - (mesh.bounds.center - halfSizePerTile).y) < allowedDiff || Mathf.Abs(verts[i].y - (mesh.bounds.center + halfSizePerTile).y) < allowedDiff
-            || Mathf.Abs(verts[i].z - (mesh.bounds.center - halfSizePerTile).z) < allowedDiff || Mathf.Abs(verts[i].z - (mesh.bounds.center + halfSizePerTile).z) < allowedDiff)
+            // LEFT
+            if(Mathf.Abs(verts[i].x - (mesh.bounds.min).x) <= allowedDiff)
             {
-                // verts.RemoveAt(i);
-                verts2.Add(verts[i]);
+                Vector3 vert = verts[i];
+                vert.x = 0;
+                left.Add(vert);
             }
-                        // if(verts[i].x == (mesh.bounds.center - halfSizePerTile).x || verts[i].x == (mesh.bounds.center + halfSizePerTile).x
-            // || verts[i].y == (mesh.bounds.center - halfSizePerTile).y || verts[i].y == (mesh.bounds.center + halfSizePerTile).y
-            // || verts[i].z == (mesh.bounds.center - halfSizePerTile).z || verts[i].z == (mesh.bounds.center + halfSizePerTile).z)
-            // {
-            //     // verts.RemoveAt(i);
-            //     verts2.Add(verts[i]);
-            // }
-        }
-        
-        // for (int i = verts.Count - 1; i >= 0; i--)
-        // {
-        //     // if((verts[i].x - mesh.bounds.min.x) % sizePerTile.x == 0 || (verts[i].z - mesh.bounds.min.z) % sizePerTile.z == 0)
-        //     // {
-        //     //     // verts.RemoveAt(i);
-        //     //     verts2.Add(verts[i]);
-        //     // }
-        // }
+            // RIGHT
+            else if(Mathf.Abs(verts[i].x - (mesh.bounds.min + sizePerTile).x) <= allowedDiff)
+            {
+                Vector3 vert = verts[i];
+                vert.x = 0;
+                right.Add(vert);
+            }
+            
+            // DOWN
+            if(Mathf.Abs(verts[i].y - (mesh.bounds.min).y) <= allowedDiff)
+            {
+                Vector3 vert = verts[i];
+                vert.y = 0;
+                down.Add(vert);
+            } 
+            // UP
+            else if(Mathf.Abs(verts[i].y - (mesh.bounds.min + sizePerTile).y) <= allowedDiff)
+            {
+                Vector3 vert = verts[i];
+                vert.y = 0;
+                up.Add(vert);
+            }
 
-        return verts2;
+            // float test = (mesh.bounds.min).z + ((mesh.bounds.min).z - 0.5f);
+
+            // BACK
+            if(Mathf.Abs(verts[i].z - (mesh.bounds.min).z) <= allowedDiff)
+            {
+                Vector3 vert = verts[i];
+                vert.z = 0;
+                back.Add(vert);
+            }
+            //FORWARD
+            else if(Mathf.Abs(verts[i].z - (mesh.bounds.min + sizePerTile).z) <= allowedDiff)
+            {
+                Vector3 vert = verts[i];
+                vert.z = 0;
+                forward.Add(vert);
+            }
+        }
+
+        Module module = new Module();
+        module.mesh = mesh;
+
+        forward.Sort(Vector3Sort);
+        back.Sort(Vector3Sort);
+        right.Sort(Vector3Sort);
+        left.Sort(Vector3Sort);        
+        up.Sort(Vector3Sort);
+        down.Sort(Vector3Sort);
+
+        module.forwardIdentifier = CreateHash(forward);
+        module.backIdentifier = CreateHash(back);
+        module.rightIdentifier = CreateHash(right);
+        module.leftIdentifier = CreateHash(left);
+        module.upIdentifier = CreateHash(up);
+        module.downIdentifier = CreateHash(down);
+        module.name = module.mesh.name;
+        module.material = defaultMaterial;
+        
+        return module;
+    }
+
+    private int Vector3Sort(Vector3 vert1, Vector3 vert2)
+    {
+        if(vert1.x == vert2.x)
+        {
+            if(vert1.y == vert2.y)
+            {
+                if(vert1.z == vert2.z)
+                {
+                    return 0;
+                }
+                else if(vert1.z < vert2.z)
+                {
+                    return -1;
+                }
+                else if(vert1.z > vert2.z)
+                {
+                    return 1;
+                }
+            }
+            else if(vert1.y < vert2.y)
+            {
+                return -1;
+            }
+            else if(vert1.y > vert2.y)
+            {
+                return 1;
+            }
+        }
+        else if(vert1.x < vert2.x)
+        {
+            return -1;
+        }
+        else if(vert1.x > vert2.x)
+        {
+            return 1;
+        }
+
+        return 0;
     }
 
     private void VisualDebug(Module[] modules)
@@ -247,11 +242,11 @@ public class MeshModuleGenerator : Generator
             Gizmos.color = Color.blue;
             Gizmos.DrawWireCube(position, sizePerTile);
 
-            List<Vector3> verts = GetViableVerts(meshes[j]);
-            for (int i = 0; i < verts.Count; i++)
-            {
-                Gizmos.DrawSphere(verts[i] + position, .05f);
-            }
+            // List<Vector3> verts = CreateModule(meshes[j]);
+            // for (int i = 0; i < verts.Count; i++)
+            // {
+            //     Gizmos.DrawSphere(verts[i] + position, .05f);
+            // }
         }
     }
 }

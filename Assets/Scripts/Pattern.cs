@@ -21,7 +21,7 @@ public class Pattern
         else
         {
             visual.AddComponent<MeshFilter>().mesh = template.mesh;
-            visual.AddComponent<MeshRenderer>().material = null;
+            visual.AddComponent<MeshRenderer>().material = template.material;
         }
 
         visual.name = template.name;
