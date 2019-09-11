@@ -97,19 +97,21 @@ public class MeshModuleGenerator : Generator
         List<Vector3> back = new List<Vector3>();
         List<Vector3> forward = new List<Vector3>();
         List<Vector3> up = new List<Vector3>();
-        List<Vector3> down = new List<Vector3>();        
+        List<Vector3> down = new List<Vector3>();      
+
+        Vector3 halfSizePerTile = sizePerTile * .5f;  
 
         for (int i = verts.Count - 1; i >= 0; i--)
         {
             // LEFT
-            if(Mathf.Abs(verts[i].x - (mesh.bounds.min).x) <= allowedDiff)
+            if(verts[i].x == ( - halfSizePerTile.x))
             {
                 Vector3 vert = verts[i];
                 vert.x = 0;
                 left.Add(vert);
             }
             // RIGHT
-            else if(Mathf.Abs(verts[i].x - (mesh.bounds.min + sizePerTile).x) <= allowedDiff)
+            else if(verts[i].x == ( + halfSizePerTile.x))
             {
                 Vector3 vert = verts[i];
                 vert.x = 0;
@@ -117,14 +119,14 @@ public class MeshModuleGenerator : Generator
             }
             
             // DOWN
-            if(Mathf.Abs(verts[i].y - (mesh.bounds.min).y) <= allowedDiff)
+            if(verts[i].y == ( - halfSizePerTile.y))
             {
                 Vector3 vert = verts[i];
                 vert.y = 0;
                 down.Add(vert);
             } 
             // UP
-            else if(Mathf.Abs(verts[i].y - (mesh.bounds.min + sizePerTile).y) <= allowedDiff)
+            else if(verts[i].y == ( + halfSizePerTile.y))
             {
                 Vector3 vert = verts[i];
                 vert.y = 0;
@@ -134,14 +136,14 @@ public class MeshModuleGenerator : Generator
             // float test = (mesh.bounds.min).z + ((mesh.bounds.min).z - 0.5f);
 
             // BACK
-            if(Mathf.Abs(verts[i].z - (mesh.bounds.min).z) <= allowedDiff)
+            if(verts[i].z == ( - halfSizePerTile.z))
             {
                 Vector3 vert = verts[i];
                 vert.z = 0;
                 back.Add(vert);
             }
             //FORWARD
-            else if(Mathf.Abs(verts[i].z - (mesh.bounds.min + sizePerTile).z) <= allowedDiff)
+            else if(verts[i].z == (halfSizePerTile.z))
             {
                 Vector3 vert = verts[i];
                 vert.z = 0;

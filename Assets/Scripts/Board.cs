@@ -130,7 +130,7 @@ public class Board : MonoBehaviour
             if(downSlot.GetAllowedPatternsCount() > 0)
                 downSlot.SyncWithNeighbor(slot, Direction.up);
         }
-        
+
         if(slot.position.z + 1 < size.z)
         {
             Slot forwardSlot = slots[slot.position.x, slot.position.y, slot.position.z + 1];
@@ -148,8 +148,10 @@ public class Board : MonoBehaviour
     // Get the tiles with the lowest non zero count
     private Slot GetLowestAllowedCount() {
         Slot lowestAllowedCountSlot = null;
-        for (int z = 0; z < size.z; z++) {
-            for (int y = 0; y < size.y; y++) {
+
+        // Prioritize X and Z before Y to create the hegith last
+        for (int y = 0; y < size.y; y++) {
+            for (int z = 0; z < size.z; z++) {
                 for (int x = 0; x < size.x; x++) {
                     if(lowestAllowedCountSlot == null) {
                         if(slots[x, y, z].GetAllowedPatternsCount() > 0) {
