@@ -330,20 +330,20 @@ public class MeshModuleGenerator : Generator
 
     private void OnDrawGizmosSelected()
     {
-        // for (int j = 0; j < meshes.Length; j++)
-        // {
-        //     Vector3 position = transform.position + new Vector3(1 * j * sizePerTile.x, 0, 0);
-        //     Gizmos.color = Color.white;
-        //     Gizmos.DrawWireMesh(meshes[j], position, Quaternion.identity);
-        //     Gizmos.color = Color.blue;
-        //     Gizmos.DrawWireCube(position, sizePerTile);
+        for (int j = 0; j < meshes.Length; j++)
+        {
+            Vector3 position = transform.position + new Vector3(1 * j * sizePerTile.x, 0, 0);
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireMesh(meshes[j], position, Quaternion.identity);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireCube(position, sizePerTile);
 
-        //     // List<Vector3> verts = CreateModule(meshes[j]);
-        //     // for (int i = 0; i < verts.Count; i++)
-        //     // {
-        //     //     Gizmos.DrawSphere(verts[i] + position, .05f);
-        //     // }
-        // }
+            // List<Vector3> verts = CreateModule(meshes[j]);
+            // for (int i = 0; i < verts.Count; i++)
+            // {
+            //     Gizmos.DrawSphere(verts[i] + position, .05f);
+            // }
+        }
 
         Vector3 offset = new Vector3(0, 0, -5);
         for (int j = 0; j < meshes.Length; j++)
