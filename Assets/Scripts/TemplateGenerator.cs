@@ -8,28 +8,22 @@ public abstract class Generator : MonoBehaviour
     public virtual Module[] GenerateTemplate() { return null; }
 }
 
-public class TemplateGenerator : Generator
+public class TemplateGenerator
 {
     public Texture2D referenceImage;
     public int pixelsPerTile = 16;
     public bool debug = false;
-    public Vector2Int middleCheckOffset = Vector2Int.zero;
-    public Vector2Int horizontalOffset = Vector2Int.zero;
-    public Vector2Int verticalOffest = Vector2Int.zero;
+    // public Vector2Int middleCheckOffset = Vector2Int.zero;
+    // public Vector2Int horizontalOffset = Vector2Int.zero;
+    // public Vector2Int verticalOffest = Vector2Int.zero;
 
-    public List<Module> templates = new List<Module>();
+    // public List<Module> templates = new List<Module>();
 
-    void Start()
+    static public Module[] GenerateTemplate(Texture2D referenceImage, int pixelsPerTile, Vector2Int middleCheckOffset, Vector2Int horizontalOffset, Vector2Int verticalOffset)
     {
-        if(debug == true)
-        {
-            GenerateTemplate();
-            VisualDebug();
-        }
-    }
+        List<Module> templates = new List<Module>();        
+        // referenceImage = reference;
 
-    public override Module[] GenerateTemplate()
-    {
         // Separate the tiles
         List<Sprite> tileSprites = new List<Sprite>();
         Vector2Int gridSize = Vector2Int.zero;
@@ -64,8 +58,8 @@ public class TemplateGenerator : Generator
 
             // Up side
             Color upMiddlePixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.center.x + middleCheckOffset.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
-            Color upLeftPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.min.x + verticalOffest.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
-            Color upRightPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1 + verticalOffest.y, (int)currentTemplate.sprite.textureRect.max.y - 1);
+            Color upLeftPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.min.x + verticalOffset.x, (int)currentTemplate.sprite.textureRect.max.y - 1);
+            Color upRightPixel = currentTemplate.sprite.texture.GetPixel((int)currentTemplate.sprite.textureRect.max.x - 1 + verticalOffset.y, (int)currentTemplate.sprite.textureRect.max.y - 1);
             currentTemplate.upIdentifier = Animator.StringToHash(upMiddlePixel.ToString() + upLeftPixel.ToString() + upRightPixel.ToString());
 
             // Right side
@@ -76,8 +70,8 @@ public class TemplateGenerator : Generator
 
             // Down side
             Color neighborDownMiddlePixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.center.x + middleCheckOffset.x, (int)templates[i].sprite.textureRect.min.y);
-            Color neighborDownLeftPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x + verticalOffest.x, (int)templates[i].sprite.textureRect.min.y);
-            Color neighborDownRightPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.max.x - 1 + verticalOffest.y, (int)templates[i].sprite.textureRect.min.y);
+            Color neighborDownLeftPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.min.x + verticalOffset.x, (int)templates[i].sprite.textureRect.min.y);
+            Color neighborDownRightPixel = templates[i].sprite.texture.GetPixel((int)templates[i].sprite.textureRect.max.x - 1 + verticalOffset.y, (int)templates[i].sprite.textureRect.min.y);
             templates[i].downIdentifier = Animator.StringToHash(neighborDownMiddlePixel.ToString() + neighborDownLeftPixel.ToString() + neighborDownRightPixel.ToString());
 
             // Left side
@@ -117,24 +111,24 @@ public class TemplateGenerator : Generator
         return templates.ToArray();
     }
 
-    private void VisualDebug()
-    {
-        for (int i = 0; i < templates.Count; i++)
-        {
-            // GameObject go = new GameObject();
-            // go.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
-            // go.transform.position = new Vector2(0, i * 2);
+    // private void VisualDebug()
+    // {
+    //     for (int i = 0; i < templates.Count; i++)
+    //     {
+    //         // GameObject go = new GameObject();
+    //         // go.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
+    //         // go.transform.position = new Vector2(0, i * 2);
 
-            for (int j = 0; j < templates[i].upNeighbors.Count; j++)
-            {
-                GameObject go = new GameObject();
-                go.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
-                go.transform.position = new Vector2(j, i * 3);
+    //         for (int j = 0; j < templates[i].upNeighbors.Count; j++)
+    //         {
+    //             GameObject go = new GameObject();
+    //             go.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
+    //             go.transform.position = new Vector2(j, i * 3);
 
-                GameObject go2 = new GameObject();
-                go2.AddComponent<SpriteRenderer>().sprite = templates[i].upNeighbors[j].sprite;
-                go2.transform.position = new Vector2(j, 1 + i * 3);
-            }
-        }
-    }
+    //             GameObject go2 = new GameObject();
+    //             go2.AddComponent<SpriteRenderer>().sprite = templates[i].upNeighbors[j].sprite;
+    //             go2.transform.position = new Vector2(j, 1 + i * 3);
+    //         }
+    //     }
+    // }
 }

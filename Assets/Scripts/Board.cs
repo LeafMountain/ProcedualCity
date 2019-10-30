@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
+    public static Board Instance = null;
+
     public Vector3Int size = Vector3Int.one;
     public Module[] patterns = null;
-    public Generator templateGenerator = null;
+    // public IGenerator<Texture2D> templateGenerator = null;
     public Material defaultMaterial = null;
 
     [Header("Other")]
@@ -13,58 +15,77 @@ public class Board : MonoBehaviour
     public float timeBetweenCollapse = 0;
 
     [Header("First Tile")]
-    public bool pickFirstTile = false;
+    // public bool pickFirstTile = false;
     public Vector3Int position = Vector3Int.zero;
-    public int templateIndex = 0;
+    // public int templateIndex = 0;
     public bool startWithGround = false;
+    public Texture2D reference = null;
 
     private Slot[,,] slots = null;
 
-    private void Start()
+    private void Awake()
     {
-        patterns = templateGenerator.GenerateTemplate();
-        foreach(Module pattern in patterns)
+        if(Instance != null)
         {
-            pattern.timesUsed = 0;
+            Destroy(this);
+            return;
         }
-        
-        // Initialize
-        slots = new Slot[size.x, size.y, size.z];
+
+        Instance = this;
+    }
+
+    public void Regenerate(Module[] patterns, bool startWithGround = false, int groundTile = 0)
+    {
+        this.patterns = patterns;
+        // foreach(Module pattern in patterns)
+        // {
+        //     pattern.timesUsed = 0;
+        // }
+
+        if(slots == null)
+        {
+            slots = new Slot[size.x, size.y, size.z];
+        }
+
         for (int z = 0; z < size.z; z++)
         {
             for (int y = 0; y < size.y; y++)
             {
                 for (int x = 0; x < size.x; x++)
                 {
+                    if(slots[x, y, z] != null)
+                    {
+                        slots[x, y, z].Destroy();
+                    }
+
                     slots[x, y, z] = new Slot();
                     slots[x, y, z].position = new Vector3Int(x, y, z);
                     slots[x, y, z].AddPatternTemplates(patterns);
                 }
             }
         }
-
-        if(pickFirstTile == true)
-        {
-            slots[position.x, position.y, position.z].PickTileManually(templateIndex);
-            Propagate(slots[position.x, position.y, position.z]);
-        }
+        // if(pickFirstTile == true)
+        // {
+        //     slots[position.x, position.y, position.z].PickTileManually(templateIndex);
+        //     Propagate(slots[position.x, position.y, position.z]);
+        // }
 
         if(startWithGround == true)
         {
-            FillGround();
+            FillGround(groundTile);
         }
 
         Go();
     }
 
-    public void FillGround()
+    public void FillGround(int index)
     {
         int maxJ = Random.Range(1, size.y / 2);
         for (int i = 0; i < size.x; i++)
         {
             for (int j = 0; j < Random.Range(1, size.y / 2); j++)
             {
-                slots[i, j, 0].PickTileManually(0);
+                slots[i, j, 0].PickTileManually(index);
                 Propagate(slots[i, j, 0]);
             }
         }
@@ -118,19 +139,6 @@ public class Board : MonoBehaviour
                 leftSlot.SyncWithNeighbor(slot, Direction.right);
         }
 
-        if(slot.position.y + 1 < size.y)
-        {
-            Slot upSlot = slots[slot.position.x, slot.position.y + 1, slot.position.z];
-            if(upSlot.GetAllowedPatternsCount() > 0)
-                upSlot.SyncWithNeighbor(slot, Direction.down);
-        }
-        if(slot.position.y - 1 >= 0)
-        {
-            Slot downSlot = slots[slot.position.x, slot.position.y - 1, slot.position.z];
-            if(downSlot.GetAllowedPatternsCount() > 0)
-                downSlot.SyncWithNeighbor(slot, Direction.up);
-        }
-
         if(slot.position.z + 1 < size.z)
         {
             Slot forwardSlot = slots[slot.position.x, slot.position.y, slot.position.z + 1];
@@ -142,6 +150,19 @@ public class Board : MonoBehaviour
             Slot backSlot = slots[slot.position.x, slot.position.y, slot.position.z - 1];
             if(backSlot.GetAllowedPatternsCount() > 0)
                 backSlot.SyncWithNeighbor(slot, Direction.forward);
+        }
+        
+        if(slot.position.y + 1 < size.y)
+        {
+            Slot upSlot = slots[slot.position.x, slot.position.y + 1, slot.position.z];
+            if(upSlot.GetAllowedPatternsCount() > 0)
+                upSlot.SyncWithNeighbor(slot, Direction.down);
+        }
+        if(slot.position.y - 1 >= 0)
+        {
+            Slot downSlot = slots[slot.position.x, slot.position.y - 1, slot.position.z];
+            if(downSlot.GetAllowedPatternsCount() > 0)
+                downSlot.SyncWithNeighbor(slot, Direction.up);
         }
     }
 

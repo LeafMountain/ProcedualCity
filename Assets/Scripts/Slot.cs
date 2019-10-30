@@ -12,6 +12,8 @@ public class Slot
     public Pattern finalPattern = null;
     public Vector3Int position = new Vector3Int(-1, -1, -1);
 
+    private GameObject visual = null;
+
     public int GetAllowedPatternsCount()
     {
         if(finalPattern != null)
@@ -67,8 +69,9 @@ public class Slot
         finalPattern.template.timesUsed++;
 
         GameObject visual = finalPattern.GetVisual();
-        visual.transform.position = (Vector3)position;
+        visual.transform.position = (Vector3)position + new Vector3(-15, 0, 0);
         visual.name = finalPattern.template.name;
+        this.visual = visual;
 
         return true;
     }
@@ -144,6 +147,14 @@ public class Slot
         {
             patterns[i] = new Pattern(templates[i]);
             patterns[i].allowed = true;
+        }
+    }
+
+    public void Destroy()
+    {
+        if(visual != null)
+        {
+            GameObject.Destroy(visual);
         }
     }
 }
