@@ -923,11 +923,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: {x: 30, y: 20, z: 1}
   patterns: []
-  defaultMaterial: {fileID: 2100000, guid: 4ab2200ae70509c48a517c9263c22b44, type: 2}
   timeBetweenCollapse: 0.01
-  position: {x: 5, y: 5, z: 0}
-  startWithGround: 1
-  reference: {fileID: 0}
+  needStructure: 0
 --- !u!4 &690681896
 Transform:
   m_ObjectHideFlags: 0
