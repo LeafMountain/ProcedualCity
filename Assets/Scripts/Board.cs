@@ -7,21 +7,16 @@ public class Board : MonoBehaviour
 
     public Vector3Int size = Vector3Int.one;
     public Module[] patterns = null;
-    // public IGenerator<Texture2D> templateGenerator = null;
-    public Material defaultMaterial = null;
 
     [Header("Other")]
 
     public float timeBetweenCollapse = 0;
 
     [Header("First Tile")]
-    // public bool pickFirstTile = false;
-    public Vector3Int position = Vector3Int.zero;
-    // public int templateIndex = 0;
-    public bool startWithGround = false;
-    public Texture2D reference = null;
 
     private Slot[,,] slots = null;
+
+    public bool needStructure = false;
 
     private void Awake()
     {
@@ -179,8 +174,8 @@ public class Board : MonoBehaviour
     private Slot GetLowestAllowedCount() {
         Slot lowestAllowedCountSlot = null;
 
-        // Prioritize X and Z before Y to create the hegith last
-        for (int y = 0; y < size.y; y++) {
+        // Prioritize X and Z before Y to create the height last
+        for (int y = 0; y < size.y && lowestAllowedCountSlot == null; y++) {
             for (int z = 0; z < size.z; z++) {
                 for (int x = 0; x < size.x; x++) {
                     if(lowestAllowedCountSlot == null) {

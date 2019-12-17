@@ -17,7 +17,6 @@ public class Module : ScriptableObject
     public int forwardIdentifier = 0;
     public int backIdentifier = 0;
 
-
     // Neighbors allowed
     public List<Module> upNeighbors = new List<Module>();
     public List<Module> rightNeighbors = new List<Module>();

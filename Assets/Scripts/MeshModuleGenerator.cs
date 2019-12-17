@@ -27,7 +27,7 @@ public class MeshModuleGenerator
     //     // }
     // }
 
-    static public Module[] GenerateTemplate(GameObject test, Material material)
+    static public Module[] GenerateTemplate(GameObject test, Material material, bool allowEmptyUp = true)
     {
         Mesh[] meshes = null;
 
@@ -60,11 +60,29 @@ public class MeshModuleGenerator
                 }
                 if(currentModule.upIdentifier == modules[j].downIdentifier)
                 {
-                    if(currentModule.upNeighbors.Contains(modules[j]) == false)
+
+                    if(allowEmptyUp == false && currentModule.upIdentifier != -1)
                     {
-                        currentModule.upNeighbors.Add(modules[j]);
-                        modules[j].downNeighbors.Add(currentModule);
+                        if(currentModule.upNeighbors.Contains(modules[j]) == false)
+                        {
+                            currentModule.upNeighbors.Add(modules[j]);
+                            modules[j].downNeighbors.Add(currentModule);
+                        }
                     }
+                    else if(allowEmptyUp == true)
+                    {
+                        if(currentModule.upNeighbors.Contains(modules[j]) == false)
+                        {
+                            currentModule.upNeighbors.Add(modules[j]);
+                            modules[j].downNeighbors.Add(currentModule);
+                        }
+                    }
+
+                    // if(currentModule.upNeighbors.Contains(modules[j]) == false)
+                    // {
+                    //     currentModule.upNeighbors.Add(modules[j]);
+                    //     modules[j].downNeighbors.Add(currentModule);
+                    // }
                 }
                 if(currentModule.rightIdentifier == modules[j].leftIdentifier)
                 {
@@ -90,7 +108,15 @@ public class MeshModuleGenerator
         {
             combined += verts[i].ToString();
         }
-        return Animator.StringToHash(combined);
+
+        int hash = Animator.StringToHash(combined);
+
+        if(hash == 0)
+        {
+            return -1;
+        }
+
+        return hash;
     }
 
     private bool OnEdge(Vector3 position)

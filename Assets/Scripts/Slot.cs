@@ -14,6 +14,8 @@ public class Slot
 
     private GameObject visual = null;
 
+    public bool somethingBelow = false;
+
     public int GetAllowedPatternsCount()
     {
         if(finalPattern != null)
@@ -63,6 +65,11 @@ public class Slot
             return false;
         }
 
+        // if(position.y != 0 && somethingBelow == false)
+        // {
+        //     return false;
+        // }
+
         int index = Random.Range(0, allowedPatterns.Count);
 
         finalPattern = allowedPatterns[index];
@@ -100,6 +107,8 @@ public class Slot
         }
         else if(neighborDirection == Direction.down)
         {
+            // somethingBelow = true;
+
             for (int i = 0; i < patterns.Length; i++)
             {
                 if(patterns[i].template.downNeighbors.Contains(neightborTile.finalPattern.template) == false)
