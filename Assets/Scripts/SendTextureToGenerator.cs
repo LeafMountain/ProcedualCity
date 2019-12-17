@@ -13,7 +13,17 @@ public class SendTextureToGenerator : MonoBehaviour
     public Vector2Int middleOffset;
     public Vector2Int horizontalOffset;
     public Vector2Int verticalOffset;
+
+    public bool sendOnStart = false;
     
+    private void Start()
+    {
+        if(sendOnStart == true)
+        {
+            Send();
+        }
+    }
+
     public void Send()
     {
         if(image != null)

@@ -9,12 +9,12 @@
     <script src="Build/TemplateData/UnityProgress.js"></script>
     <script src="Build/Build/UnityLoader.js"></script>
     <script>
-      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/Build/Build.json", {onProgress: UnityProgress});
+      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/Build/Webgl.json", {onProgress: UnityProgress});
     </script>
   </head>
   <body>
     <div class="webgl-content">
-      <div id="unityContainer" style="width: 720px; height: 720px"></div>
+      <div id="unityContainer" style="width: 720px; height: 405px"></div>
       <!-- <div class="footer">
         <div class="webgl-logo"></div>
         <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
