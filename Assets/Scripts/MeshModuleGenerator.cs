@@ -3,17 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MeshModuleGenerator : Generator
+public class MeshModuleGenerator
 {
-    public Mesh[] meshes = null;    // Take multiple meshes instead?
+    // public Mesh[] meshes = null;
     public Vector3 sizePerTile = Vector3.one;
     public Material defaultMaterial = null;
     public GameObject test;
 
     public bool debug = false;
 
-    private void Start()
+    // private void Start()
+    // {
+    //     MeshFilter[] filters = test.GetComponentsInChildren<MeshFilter>();
+    //     meshes = new Mesh[filters.Length];
+    //     for (int i = 0; i < filters.Length; i++)
+    //     {
+    //         meshes[i] = filters[i].sharedMesh;
+    //     }
+
+    //     // if(debug)
+    //     // {
+    //     //     VisualDebug(GenerateTemplate());
+    //     // }
+    // }
+
+    static public Module[] GenerateTemplate(GameObject test, Material material)
     {
+        Mesh[] meshes = null;
+
         MeshFilter[] filters = test.GetComponentsInChildren<MeshFilter>();
         meshes = new Mesh[filters.Length];
         for (int i = 0; i < filters.Length; i++)
@@ -21,18 +38,10 @@ public class MeshModuleGenerator : Generator
             meshes[i] = filters[i].sharedMesh;
         }
 
-        // if(debug)
-        // {
-        //     VisualDebug(GenerateTemplate());
-        // }
-    }
-
-    public override Module[] GenerateTemplate()
-    {
         List<Module> modules = new List<Module>();
         for (int i = 0; i < meshes.Length; i++)
         {
-            modules.Add(CreateModule(meshes[i]));
+            modules.Add(CreateModule(meshes[i], material));
         }
 
         for (int i = 0; i < modules.Count; i++)
@@ -71,7 +80,7 @@ public class MeshModuleGenerator : Generator
         return modules.ToArray();
     }
 
-    private int CreateHash(List<Vector3> verts)
+    static private int CreateHash(List<Vector3> verts)
     {
         // verts.Sort(Vector3Sort);
 
@@ -90,8 +99,10 @@ public class MeshModuleGenerator : Generator
         return position.x == -halfSize.x || position.x == halfSize.x || position.y == -halfSize.y || position.y == halfSize.y || position.z == -halfSize.z || position.z == halfSize.z;
     }
 
-    private Module CreateModule(Mesh mesh)
+    static private Module CreateModule(Mesh mesh, Material material)
     {
+        Vector3 sizePerTile = Vector3.one;
+
         List<Vector3> verts = GetVertsAlogEdges(mesh);
         // mesh.GetVertices(verts);
         verts = verts.Distinct().ToList();
@@ -178,7 +189,7 @@ public class MeshModuleGenerator : Generator
         module.upIdentifier = CreateHash(up);
         module.downIdentifier = CreateHash(down);
         module.name = module.mesh.name;
-        module.material = defaultMaterial;
+        module.material = material;
         
         return module;
     }
@@ -244,7 +255,7 @@ public class MeshModuleGenerator : Generator
     //     }
     // }
 
-    private class Edge
+    public class Edge
     {
         public Vector3 first, second;
         public Edge(Vector3 first, Vector3 second)
@@ -267,7 +278,7 @@ public class MeshModuleGenerator : Generator
         }
     }
 
-    private List<Edge> GetEdges(Mesh mesh)
+    static public List<Edge> GetEdges(Mesh mesh)
     {
         List<Edge> edges = new List<Edge>(mesh.triangles.Length / 3);
 
@@ -316,7 +327,7 @@ public class MeshModuleGenerator : Generator
         return edges;
     }
 
-    private List<Vector3> GetVertsAlogEdges(Mesh mesh)
+    static public List<Vector3> GetVertsAlogEdges(Mesh mesh)
     {
         List<Edge> edges = GetEdges(mesh);
         List<Vector3> edgeVerts = new List<Vector3>(edges.Count * 2);
@@ -328,31 +339,31 @@ public class MeshModuleGenerator : Generator
         return edgeVerts;
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        for (int j = 0; j < meshes.Length; j++)
-        {
-            Vector3 position = transform.position + new Vector3(1 * j * sizePerTile.x, 0, 0);
-            Gizmos.color = Color.white;
-            Gizmos.DrawWireMesh(meshes[j], position, Quaternion.identity);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireCube(position, sizePerTile);
+    // private void OnDrawGizmosSelected()
+    // {
+    //     for (int j = 0; j < meshes.Length; j++)
+    //     {
+    //         Vector3 position = transform.position + new Vector3(1 * j * sizePerTile.x, 0, 0);
+    //         Gizmos.color = Color.white;
+    //         Gizmos.DrawWireMesh(meshes[j], position, Quaternion.identity);
+    //         Gizmos.color = Color.blue;
+    //         Gizmos.DrawWireCube(position, sizePerTile);
 
-            // List<Vector3> verts = CreateModule(meshes[j]);
-            // for (int i = 0; i < verts.Count; i++)
-            // {
-            //     Gizmos.DrawSphere(verts[i] + position, .05f);
-            // }
-        }
+    //         // List<Vector3> verts = CreateModule(meshes[j]);
+    //         // for (int i = 0; i < verts.Count; i++)
+    //         // {
+    //         //     Gizmos.DrawSphere(verts[i] + position, .05f);
+    //         // }
+    //     }
 
-        Vector3 offset = new Vector3(0, 0, -5);
-        for (int j = 0; j < meshes.Length; j++)
-        {
-            List<Edge> edges = GetEdges(meshes[j]);
-            for (int i = 0; i < edges.Count; i++)
-            {
-                Gizmos.DrawLine(edges[i].first + offset + Vector3.right * (j + j), edges[i].second + offset + Vector3.right * (j + j));
-            }      
-        }
-    }
+    //     Vector3 offset = new Vector3(0, 0, -5);
+    //     for (int j = 0; j < meshes.Length; j++)
+    //     {
+    //         List<Edge> edges = GetEdges(meshes[j]);
+    //         for (int i = 0; i < edges.Count; i++)
+    //         {
+    //             Gizmos.DrawLine(edges[i].first + offset + Vector3.right * (j + j), edges[i].second + offset + Vector3.right * (j + j));
+    //         }      
+    //     }
+    // }
 }

@@ -8,6 +8,7 @@ public class SendTextureToGenerator : MonoBehaviour
     public int pixelsPerTile = 16;
     public bool startWithGround = false;
     public int groundTileIndex = 0;
+    public Vector3Int size = new Vector3Int(30, 20, 1);
 
     public Vector2Int middleOffset;
     public Vector2Int horizontalOffset;
@@ -17,7 +18,7 @@ public class SendTextureToGenerator : MonoBehaviour
     {
         if(image != null)
         {
-            Board.Instance.Regenerate(TemplateGenerator.GenerateTemplate(image, pixelsPerTile, middleOffset, horizontalOffset, verticalOffset), startWithGround, groundTileIndex);
+            Board.Instance.Regenerate(TemplateGenerator.GenerateTemplate(image, pixelsPerTile, middleOffset, horizontalOffset, verticalOffset), size, startWithGround, groundTileIndex);
         }
     }
 }

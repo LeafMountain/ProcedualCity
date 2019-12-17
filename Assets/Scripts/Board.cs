@@ -34,18 +34,27 @@ public class Board : MonoBehaviour
         Instance = this;
     }
 
-    public void Regenerate(Module[] patterns, bool startWithGround = false, int groundTile = 0)
+    public void Regenerate(Module[] patterns, Vector3Int size, bool startWithGround = false, int groundTile = 0)
     {
+        this.size = size;
         this.patterns = patterns;
         // foreach(Module pattern in patterns)
         // {
         //     pattern.timesUsed = 0;
         // }
 
-        if(slots == null)
+        if(slots != null)
         {
-            slots = new Slot[size.x, size.y, size.z];
+            foreach (var item in slots)
+            {
+                if(item != null)
+                {
+                    item.Destroy();
+                }
+            }
         }
+
+        slots = new Slot[size.x, size.y, size.z];
 
         for (int z = 0; z < size.z; z++)
         {

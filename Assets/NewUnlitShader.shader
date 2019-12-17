@@ -49,7 +49,6 @@
             {
                 return fixed4(i.normal, 0);
 
-                
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
                 // apply fog

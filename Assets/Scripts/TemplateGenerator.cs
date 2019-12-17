@@ -3,26 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class Generator : MonoBehaviour
-{
-    public virtual Module[] GenerateTemplate() { return null; }
-}
+// public abstract class Generator : MonoBehaviour
+// {
+//     public virtual Module[] GenerateTemplate() { return null; }
+// }
 
 public class TemplateGenerator
 {
     public Texture2D referenceImage;
     public int pixelsPerTile = 16;
     public bool debug = false;
-    // public Vector2Int middleCheckOffset = Vector2Int.zero;
-    // public Vector2Int horizontalOffset = Vector2Int.zero;
-    // public Vector2Int verticalOffest = Vector2Int.zero;
-
-    // public List<Module> templates = new List<Module>();
 
     static public Module[] GenerateTemplate(Texture2D referenceImage, int pixelsPerTile, Vector2Int middleCheckOffset, Vector2Int horizontalOffset, Vector2Int verticalOffset)
     {
         List<Module> templates = new List<Module>();        
-        // referenceImage = reference;
 
         // Separate the tiles
         List<Sprite> tileSprites = new List<Sprite>();
@@ -110,25 +104,4 @@ public class TemplateGenerator
         Debug.Log("Template done");
         return templates.ToArray();
     }
-
-    // private void VisualDebug()
-    // {
-    //     for (int i = 0; i < templates.Count; i++)
-    //     {
-    //         // GameObject go = new GameObject();
-    //         // go.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
-    //         // go.transform.position = new Vector2(0, i * 2);
-
-    //         for (int j = 0; j < templates[i].upNeighbors.Count; j++)
-    //         {
-    //             GameObject go = new GameObject();
-    //             go.AddComponent<SpriteRenderer>().sprite = templates[i].sprite;
-    //             go.transform.position = new Vector2(j, i * 3);
-
-    //             GameObject go2 = new GameObject();
-    //             go2.AddComponent<SpriteRenderer>().sprite = templates[i].upNeighbors[j].sprite;
-    //             go2.transform.position = new Vector2(j, 1 + i * 3);
-    //         }
-    //     }
-    // }
 }
